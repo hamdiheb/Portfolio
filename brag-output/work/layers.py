@@ -31,7 +31,7 @@ CURSOR = """<svg xmlns="http://www.w3.org/2000/svg" width="64" height="88" viewB
 END = {
     "end_name": '<div style="font-size:200px;font-weight:900;letter-spacing:-0.045em;line-height:.92;color:#0a0a0a;padding:10px 20px">Iheb Hamdi</div>',
     "end_role": '<div style="font-size:46px;font-weight:600;letter-spacing:-0.015em;color:#0a0a0a;padding:10px 20px">Full-Stack Engineer <span style="color:#a3a3a3">·</span> Barcelona, Spain</div>',
-    "end_url": '<div style="display:inline-flex;align-items:center;gap:14px;margin:30px 60px 70px;padding:20px 34px;border-radius:999px;background:#0a0a0a;color:#fafafa;font-size:34px;font-weight:600;box-shadow:0 18px 50px -18px rgba(0,0,0,.45)">portfolio-khaki-chi.vercel.app <span style="font-size:30px">→</span></div>',
+    "end_url": '<div style="display:inline-flex;align-items:center;gap:14px;margin:30px 60px 70px;padding:20px 34px;border-radius:999px;background:#0a0a0a;color:#fafafa;font-size:34px;font-weight:600;box-shadow:0 18px 50px -18px rgba(0,0,0,.45)">hamdiheb.vercel.app <span style="font-size:30px">→</span></div>',
     "end_sub": '<div style="font-size:30px;font-weight:500;color:#737373;padding:10px 20px">Ask the AI assistant · see the skyline · say hello</div>',
 }
 
