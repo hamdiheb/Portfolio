@@ -10,7 +10,11 @@ const GREETING: ChatMessage = {
     'Hi! Ask me anything about my background — real CV-grounded answers are coming soon; this is a mocked preview for now.',
 }
 
-export function ChatSection() {
+interface ChatSectionProps {
+  className?: string
+}
+
+export function ChatSection({ className }: ChatSectionProps) {
   const [messages, setMessages] = React.useState<ChatMessage[]>([GREETING])
   const [isThinking, setIsThinking] = React.useState(false)
 
@@ -34,12 +38,11 @@ export function ChatSection() {
   }
 
   return (
-    <section className="mx-auto w-full max-w-md px-4 pt-28 pb-16 sm:pt-36">
-      <ChatCard
-        messages={messages}
-        onSubmit={handleSubmit}
-        isThinking={isThinking}
-      />
-    </section>
+    <ChatCard
+      className={className}
+      messages={messages}
+      onSubmit={handleSubmit}
+      isThinking={isThinking}
+    />
   )
 }

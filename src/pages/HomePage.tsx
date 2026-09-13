@@ -1,11 +1,22 @@
+import * as React from 'react'
+
 import { AnimatedNavFramer } from '@/components/ui/navigation-menu'
-import { ChatSection } from '@/components/chat/ChatSection'
+import { HeroSection } from '@/components/hero/HeroSection'
+import { ChatWidget, type ChatMode } from '@/components/chat/ChatWidget'
 
 export default function HomePage() {
+  const [chatMode, setChatMode] = React.useState<ChatMode>('hidden')
+
   return (
     <>
       <AnimatedNavFramer />
-      <ChatSection />
+      <HeroSection onOpenChat={() => setChatMode('open')} />
+      <ChatWidget
+        mode={chatMode}
+        onCollapse={() => setChatMode('compact')}
+        onExpand={() => setChatMode('open')}
+        onClose={() => setChatMode('hidden')}
+      />
     </>
   )
 }
