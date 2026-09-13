@@ -5,7 +5,7 @@ import { MessageCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const ROTATING_WORDS = ['my experience', 'my projects', 'my skills', 'me']
-const ROTATE_INTERVAL_MS = 2200
+const ROTATE_INTERVAL_MS = 4200
 
 function SwappingWord() {
   const [index, setIndex] = React.useState(0)
@@ -83,8 +83,7 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
         </h1>
 
         <p className="relative mt-6 max-w-md text-base text-muted-foreground sm:text-lg">
-          A small assistant grounded in my CV — ask about my background,
-          skills, or projects.
+          A small assistant grounded in my CV — ask about my background, skills, or projects.
         </p>
 
         <button

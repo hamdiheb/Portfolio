@@ -2,6 +2,7 @@ import * as React from 'react'
 
 import { AnimatedNavFramer } from '@/components/ui/navigation-menu'
 import { HeroSection } from '@/components/hero/HeroSection'
+import { SkillsSlider } from '@/components/skills/SkillsSlider'
 import { ChatWidget, type ChatMode } from '@/components/chat/ChatWidget'
 
 export default function HomePage() {
@@ -11,6 +12,7 @@ export default function HomePage() {
     <>
       <AnimatedNavFramer />
       <HeroSection onOpenChat={() => setChatMode('open')} />
+      <SkillsSlider />
       <ChatWidget
         mode={chatMode}
         onCollapse={() => setChatMode('compact')}
