@@ -11,6 +11,8 @@ import { useCvChat } from './CvChatProvider'
 const CLOSE_SCROLL_PX = 60
 // Ignore scrolls right after opening (focus and mobile keyboards nudge the page).
 const OPEN_GRACE_MS = 350
+// Ignore scrolls while the mobile keyboard slides in or out after the input gains/loses focus.
+const KEYBOARD_GRACE_MS = 800
 const LAUNCHER_ID = 'cv-chat-launcher'
 
 interface LauncherButtonProps {
@@ -74,12 +76,19 @@ export function ChatLauncher({ className }: ChatLauncherProps) {
 
   React.useEffect(() => {
     if (!open) return
-    const startY = window.scrollY
-    const openedAt = performance.now()
+    let startY = window.scrollY
+    let ignoreUntil = performance.now() + OPEN_GRACE_MS
 
     function onScroll() {
-      if (performance.now() - openedAt < OPEN_GRACE_MS) return
+      // While typing, the keyboard (not the user) moves the page: re-anchor instead of closing.
+      if (performance.now() < ignoreUntil || document.activeElement === inputRef.current) {
+        startY = window.scrollY
+        return
+      }
       if (Math.abs(window.scrollY - startY) > CLOSE_SCROLL_PX) setOpen(false)
+    }
+    function onInputFocusChange(e: FocusEvent) {
+      if (e.target === inputRef.current) ignoreUntil = performance.now() + KEYBOARD_GRACE_MS
     }
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') {
@@ -90,10 +99,14 @@ export function ChatLauncher({ className }: ChatLauncherProps) {
 
     window.addEventListener('scroll', onScroll, { passive: true })
     document.addEventListener('keydown', onKeyDown)
+    document.addEventListener('focusin', onInputFocusChange)
+    document.addEventListener('focusout', onInputFocusChange)
     if (window.matchMedia('(pointer: fine)').matches) inputRef.current?.focus({ preventScroll: true })
     return () => {
       window.removeEventListener('scroll', onScroll)
       document.removeEventListener('keydown', onKeyDown)
+      document.removeEventListener('focusin', onInputFocusChange)
+      document.removeEventListener('focusout', onInputFocusChange)
     }
   }, [open, setOpen])
 
