@@ -1,0 +1,7 @@
+# Caddy fetches and renews the HTTPS certificate for API_DOMAIN automatically.
+{$API_DOMAIN} {
+	reverse_proxy api:3001 {
+		# Send answers to the browser as they stream, not when they finish.
+		flush_interval -1
+	}
+}

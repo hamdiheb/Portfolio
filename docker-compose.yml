@@ -1,0 +1,45 @@
+# CV chatbot API behind Caddy (automatic HTTPS).
+#
+#   cp .env.example .env            # set API_DOMAIN
+#   cp back/.env.example back/.env  # set GROQ_API_KEY, ALLOWED_ORIGINS
+#   docker compose up -d --build
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: back/Dockerfile
+    env_file: back/.env
+    environment:
+      # No local LLM fits on a small VM; answers come from Groq.
+      LLM_PROVIDER: groq
+      # Caddy is the one proxy hop in front of the API.
+      TRUST_PROXY: 1
+      # Baked into the image; overrides the dev path in back/.env.
+      RESUME_PATH: /app/data/resume.pdf
+      PORT: 3001
+    expose:
+      - '3001'
+    mem_limit: 600m
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2-alpine
+    environment:
+      API_DOMAIN: ${API_DOMAIN:?Set API_DOMAIN in .env next to docker-compose.yml}
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:

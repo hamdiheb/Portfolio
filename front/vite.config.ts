@@ -11,4 +11,8 @@ export default defineConfig({
       '@': path.resolve(import.meta.dirname, './src'),
     },
   },
+  server: {
+    // The CV chatbot backend (../back) runs on 3001 during development.
+    proxy: { '/api': 'http://localhost:3001' },
+  },
 })
