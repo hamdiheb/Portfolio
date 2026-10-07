@@ -4,6 +4,8 @@
 FROM node:24-slim AS deps
 WORKDIR /app
 COPY back/package.json back/package-lock.json ./
+# Don't download the GPU (CUDA) build of onnxruntime: hundreds of MB the CPU-only server never uses.
+ENV ONNXRUNTIME_NODE_INSTALL=skip
 # The server runs on CPU on Linux, so drop what it never loads: the browser
 # runtime, the macOS/Windows binaries and the CUDA/TensorRT providers (~620 MB).
 RUN npm ci --omit=dev \
