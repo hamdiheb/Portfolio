@@ -19,7 +19,12 @@ export const config = {
   // "groq" (hosted, fast — use on small servers) or "ollama" (fully local).
   llmProvider: process.env.LLM_PROVIDER ?? (process.env.GROQ_API_KEY ? 'groq' : 'ollama'),
   groqApiKey: process.env.GROQ_API_KEY,
-  groqModel: process.env.GROQ_MODEL ?? 'llama-3.1-8b-instant',
+  groqModel: process.env.GROQ_MODEL || 'openai/gpt-oss-20b',
+  // Reasoning models think before answering; "low" keeps replies fast. Empty = automatic:
+  // "low" for gpt-oss models, not sent for others (which would reject it).
+  groqReasoningEffort:
+    process.env.GROQ_REASONING_EFFORT ||
+    (/gpt-oss/.test(process.env.GROQ_MODEL || 'openai/gpt-oss-20b') ? 'low' : undefined),
   ollamaBaseUrl: process.env.OLLAMA_BASE_URL ?? 'http://127.0.0.1:11434',
   ollamaModel: process.env.OLLAMA_MODEL ?? process.env.CHAT_MODEL ?? 'llama3',
   // How long Ollama keeps the chat model in memory between questions.

@@ -32,7 +32,12 @@ const prompt = ChatPromptTemplate.fromMessages([
 async function createLlm() {
   if (config.llmProvider === 'groq') {
     const { ChatGroq } = await import('@langchain/groq')
-    return new ChatGroq({ apiKey: config.groqApiKey, model: config.groqModel, temperature: 0.2 })
+    return new ChatGroq({
+      apiKey: config.groqApiKey,
+      model: config.groqModel,
+      temperature: 0.2,
+      reasoningEffort: config.groqReasoningEffort,
+    })
   }
   const { ChatOllama } = await import('@langchain/ollama')
   return new ChatOllama({
