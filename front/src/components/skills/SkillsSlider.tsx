@@ -12,16 +12,19 @@ import {
   SiPostgresql,
   SiSupabase,
   SiDocker,
+  SiGithubactions,
+  SiGooglecloud,
   SiGit,
   SiGithub,
   SiVercel,
   SiNetlify,
   SiRender,
   SiClaude,
+  SiAnthropic,
   SiOpenrouter,
   SiLangchain,
 } from 'react-icons/si'
-import { TbBrandOpenai } from 'react-icons/tb'
+import { TbBolt, TbBrandOpenai } from 'react-icons/tb'
 
 interface Skill {
   name: string
@@ -30,8 +33,8 @@ interface Skill {
   color?: string
 }
 
-// The CV's stack, plus TypeScript, Framer Motion and LangChain, which this site
-// and its CV chatbot are built with.
+// The CV's stack, plus TypeScript, Framer Motion, LangChain and Groq, which this site
+// and its CV chatbot are built with. Simple Icons has no Groq mark, so a bolt stands in.
 const SKILLS: Skill[] = [
   { name: 'JavaScript', Icon: SiJavascript, color: '#F7DF1E' },
   { name: 'TypeScript', Icon: SiTypescript, color: '#3178C6' },
@@ -45,13 +48,17 @@ const SKILLS: Skill[] = [
   { name: 'GSAP', Icon: SiGsap, color: '#0AE448' },
   { name: 'Framer Motion', Icon: SiFramer },
   { name: 'Docker', Icon: SiDocker, color: '#2496ED' },
+  { name: 'CI/CD', Icon: SiGithubactions, color: '#2088FF' },
   { name: 'Git', Icon: SiGit, color: '#F05032' },
   { name: 'GitHub', Icon: SiGithub },
+  { name: 'Google Cloud', Icon: SiGooglecloud, color: '#4285F4' },
   { name: 'Vercel', Icon: SiVercel },
   { name: 'Netlify', Icon: SiNetlify, color: '#00C7B7' },
   { name: 'Render', Icon: SiRender },
   { name: 'Claude Code', Icon: SiClaude, color: '#D97757' },
   { name: 'OpenAI Codex', Icon: TbBrandOpenai },
+  { name: 'Claude API', Icon: SiAnthropic },
+  { name: 'Groq', Icon: TbBolt, color: '#F55036' },
   { name: 'OpenRouter', Icon: SiOpenrouter },
   { name: 'LangChain', Icon: SiLangchain },
 ]

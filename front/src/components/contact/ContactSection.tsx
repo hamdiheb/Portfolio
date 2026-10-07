@@ -8,7 +8,9 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
 import { sendContact } from './contactApi'
+import { ContactDog } from './ContactDog'
 import { EMAIL, SOCIAL_LINKS } from './socials'
+
 
 const EASE = [0.22, 1, 0.36, 1] as const
 
@@ -325,15 +327,22 @@ export function ContactSection() {
           <p className="text-xs font-medium tracking-widest text-muted-foreground uppercase">
             Contact
           </p>
-          {/* `!` beats the unlayered h1/h2/p rules in index.css. */}
-          <h2
-            id="contact-heading"
-            className="mt-3! mb-0! text-[clamp(2.75rem,8vw,6rem)]! leading-[0.95]! font-black! tracking-[-0.045em]! text-foreground!"
-          >
-            Let’s work
-            <br />
-            together.
-          </h2>
+          {/* The dog sits right after the heading, bottom-aligned; where there's no room
+              (small phones) it wraps below. */}
+          <div className="mt-3 flex flex-wrap items-end gap-x-2 gap-y-2">
+            {/* `!` beats the unlayered h1/h2/p rules in index.css. */}
+            <h2
+              id="contact-heading"
+              className="m-0! text-[clamp(2.75rem,8vw,6rem)]! leading-[0.95]! font-black! tracking-[-0.045em]! text-foreground!"
+            >
+              Let’s work
+              <br />
+              together.
+            </h2>
+            <div aria-hidden="true" className="aspect-[7/5] w-[clamp(96px,24vw,300px)] shrink-0">
+              <ContactDog />
+            </div>
+          </div>
         </Reveal>
 
         <div className="mt-12 grid gap-12 md:mt-16 md:grid-cols-[1fr_1.25fr] md:gap-12 lg:gap-20">

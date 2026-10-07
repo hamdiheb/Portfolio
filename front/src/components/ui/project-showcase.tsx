@@ -19,6 +19,9 @@ export interface Project {
   /** Source code. */
   repoHref?: string
   tags?: string[]
+  /** Screenshot of the live site, shown in the hover preview. */
+  image?: string
+  /** Hover-preview background when there's no screenshot. */
   gradientClassName: string
 }
 
@@ -27,22 +30,36 @@ interface ProjectShowcaseProps {
   className?: string
 }
 
-const PREVIEW_HEIGHT = 160
-const PREVIEW_WIDTH = 224
+// 16:10, the shape of the desktop screenshots. A little narrower on small laptops so the
+// card doesn't cover the description column.
+const previewSize = () => {
+  const width = window.innerWidth >= 1280 ? 320 : 272
+  return { width, height: Math.round(width * 0.625) }
+}
 
 export function ProjectShowcase({ projects, className }: ProjectShowcaseProps) {
   const reduce = useReducedMotion()
   const [hoveredId, setHoveredId] = React.useState<string | null>(null)
   const [previewTop, setPreviewTop] = React.useState(0)
+  const [size, setSize] = React.useState({ width: 320, height: 200 })
   const containerRef = React.useRef<HTMLUListElement>(null)
+
+  // Warm the cache once the browser is idle, so a screenshot is ready the first time a row is hovered.
+  React.useEffect(() => {
+    const preload = () => projects.forEach((p) => p.image && (new Image().src = p.image))
+    const id = window.requestIdleCallback ? window.requestIdleCallback(preload) : window.setTimeout(preload, 1500)
+    return () => (window.cancelIdleCallback ? window.cancelIdleCallback(id) : window.clearTimeout(id))
+  }, [projects])
 
   const activeProject = projects.find((p) => p.id === hoveredId)
 
   function show(row: HTMLElement, id: string) {
     const rowRect = row.getBoundingClientRect()
     const containerRect = containerRef.current?.getBoundingClientRect()
+    const next = previewSize()
+    setSize(next)
     if (containerRect) {
-      setPreviewTop(rowRect.top - containerRect.top + rowRect.height / 2 - PREVIEW_HEIGHT / 2)
+      setPreviewTop(rowRect.top - containerRect.top + rowRect.height / 2 - next.height / 2)
     }
     setHoveredId(id)
   }
@@ -130,20 +147,31 @@ export function ProjectShowcase({ projects, className }: ProjectShowcaseProps) {
               position: 'absolute',
               // Clear of the role/year column so it stays readable.
               right: '7rem',
-              height: PREVIEW_HEIGHT,
-              width: PREVIEW_WIDTH,
+              height: size.height,
+              width: size.width,
             }}
             className={cn(
-              'pointer-events-none z-20 hidden flex-col justify-end overflow-hidden rounded-2xl p-4 shadow-xl lg:flex',
-              activeProject.gradientClassName,
+              'pointer-events-none z-20 hidden flex-col justify-end overflow-hidden rounded-2xl shadow-xl ring-1 ring-black/10 lg:flex',
+              !activeProject.image && cn('p-4', activeProject.gradientClassName),
             )}
           >
-            <span className="text-xl leading-tight font-bold tracking-tight text-white drop-shadow-sm">
-              {activeProject.name}
-            </span>
-            <span className="mt-1 text-xs font-medium text-white/80">
-              {[activeProject.role, activeProject.year].filter(Boolean).join(' · ')}
-            </span>
+            {activeProject.image ? (
+              <img
+                src={activeProject.image}
+                alt=""
+                className="h-full w-full bg-muted object-cover object-top"
+                decoding="async"
+              />
+            ) : (
+              <>
+                <span className="text-xl leading-tight font-bold tracking-tight text-white drop-shadow-sm">
+                  {activeProject.name}
+                </span>
+                <span className="mt-1 text-xs font-medium text-white/80">
+                  {[activeProject.role, activeProject.year].filter(Boolean).join(' · ')}
+                </span>
+              </>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

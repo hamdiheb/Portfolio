@@ -84,7 +84,7 @@ function Ghost({
         src={profileImg}
         alt=""
         aria-hidden="true"
-        className="h-full w-full object-cover object-top grayscale"
+        className="h-full w-full object-cover object-top"
         // Only the ghost's left strip peeks out from behind the photo; fading it
         // keeps the trail soft instead of a hard-edged copy of the backdrop.
         style={{
@@ -99,7 +99,7 @@ function Ghost({
   )
 }
 
-/** The grayscale photo with its ghost trail; sized by the parent. */
+/** The photo, in its original colours, with its ghost trail; sized by the parent. */
 function PortraitPhoto({
   pointer,
   className,
@@ -117,7 +117,7 @@ function PortraitPhoto({
       <motion.img
         src={profileImg}
         alt={alt}
-        className="relative h-full w-full object-cover object-top grayscale contrast-[1.08]"
+        className="relative h-full w-full object-cover object-top"
         initial={reduce ? false : { clipPath: 'inset(100% 0% 0% 0%)' }}
         animate={{ clipPath: 'inset(0% 0% 0% 0%)' }}
         transition={{ duration: 1.1, ease: EASE, delay: 0.25 }}
@@ -216,7 +216,8 @@ export function HeroSection() {
             <p className="mt-4! max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
               Full-Stack Engineer based in Barcelona, Spain. I ship production web systems end to
               end — Node.js REST APIs, PostgreSQL data models and React front ends — and build
-              AI-powered features without cutting corners.
+              AI-powered features without cutting corners. Every project ships fully deployed,
+              with a CI/CD pipeline behind it.
             </p>
           </FadeUp>
 

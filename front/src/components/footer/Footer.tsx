@@ -5,9 +5,8 @@ import { SOCIAL_LINKS } from '@/components/contact/socials'
 export function Footer() {
   const year = new Date().getFullYear()
 
-  // Bottom padding keeps the last row clear of the fixed chat launcher.
   return (
-    <footer id="footer" className="border-t px-4 pt-10 pb-24 text-left sm:pb-28">
+    <footer id="footer" className="border-t px-4 pt-10 pb-6 text-left sm:pb-8">
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -35,7 +34,8 @@ export function Footer() {
           </ul>
         </div>
 
-        <div className="mt-8 flex items-center justify-between gap-4 border-t pt-6 text-xs text-muted-foreground">
+        {/* Right padding keeps "Back to top" clear of the fixed chat launcher. */}
+        <div className="mt-8 flex items-center justify-between gap-4 border-t pt-6 pr-16 text-xs text-muted-foreground sm:pr-20">
           <p className="m-0!">© {year} Iheb Hamdi</p>
           <a
             href="#home"
