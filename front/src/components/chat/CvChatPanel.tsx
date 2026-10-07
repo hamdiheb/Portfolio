@@ -179,7 +179,8 @@ export function CvChatPanel({ className, listClassName, inputRef, onClose }: CvC
           maxLength={500}
           placeholder="Ask me anything about my CV…"
           aria-label="Ask my AI assistant a question about my CV"
-          className="h-11 min-w-0 flex-1 rounded-full border bg-background px-4 text-sm text-foreground outline-none transition-shadow placeholder:text-muted-foreground focus:ring-2 focus:ring-assistant/40"
+          // 16px on mobile: iOS Safari zooms into any focused input smaller than that.
+          className="h-11 min-w-0 flex-1 rounded-full border bg-background px-4 text-base text-foreground sm:text-sm outline-none transition-shadow placeholder:text-muted-foreground focus:ring-2 focus:ring-assistant/40"
         />
         <button
           type="submit"
