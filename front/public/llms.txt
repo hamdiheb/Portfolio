@@ -2,7 +2,7 @@
 
 > Iheb Hamdi is a full-stack software engineer based in Barcelona, Spain. He ships production web systems end to end — REST APIs, relational data models and React front ends — and builds LLM-powered features. He works in Agile/Scrum teams with Git-based code review and CI/CD.
 
-- Website: https://portfolio-khaki-chi.vercel.app/
+- Website: https://hamdiheb.vercel.app/
 - GitHub: https://github.com/hamdiheb
 - LinkedIn: https://www.linkedin.com/in/hamdiheb
 - Location: Barcelona, Catalonia, Spain

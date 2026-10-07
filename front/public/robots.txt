@@ -2,4 +2,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://portfolio-khaki-chi.vercel.app/sitemap.xml
+Sitemap: https://hamdiheb.vercel.app/sitemap.xml
