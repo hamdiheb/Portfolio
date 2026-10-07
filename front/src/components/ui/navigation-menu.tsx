@@ -5,12 +5,43 @@ import { motion, useScroll, useMotionValueEvent, type Variants } from "framer-mo
 import { Navigation, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+// Each href targets a section id on the home page (the contact section owns #contact).
 const navItems = [
-  { name: "Home", href: "#" },
-  { name: "About", href: "#" },
-  { name: "Services", href: "#" },
-  { name: "Contact", href: "#" },
+  { name: "Home", href: "#home" },
+  { name: "Projects", href: "#projects" },
+  { name: "GitHub", href: "#github" },
+  { name: "Contact", href: "#contact" },
 ];
+
+/** The id of the section currently under the nav, for aria-current and the active style. */
+function useActiveSection(ids: string[]) {
+  const [active, setActive] = React.useState(ids[0]);
+
+  React.useEffect(() => {
+    const sections = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+    if (sections.length === 0) return;
+
+    const visible = new Map<string, boolean>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) visible.set(entry.target.id, entry.isIntersecting);
+        // The last section (in page order) crossing the band below the nav wins.
+        const current = [...ids].reverse().find((id) => visible.get(id));
+        if (current) setActive(current);
+      },
+      // A thin band ~35% down the viewport.
+      { rootMargin: "-35% 0px -60% 0px" },
+    );
+    sections.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [ids]);
+
+  return active;
+}
+
+const sectionIds = navItems.map((item) => item.href.slice(1));
 
 const EXPAND_SCROLL_THRESHOLD = 80;
 
@@ -70,6 +101,7 @@ const collapsedIconVariants: Variants = {
 
 export function AnimatedNavFramer() {
   const [isExpanded, setExpanded] = React.useState(true);
+  const activeId = useActiveSection(sectionIds);
 
   const { scrollY } = useScroll();
   const lastScrollY = React.useRef(0);
@@ -98,14 +130,17 @@ export function AnimatedNavFramer() {
 
 
   return (
-    <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50">
+    <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50">
       <motion.nav
+        aria-label="Main"
         initial={{ y: -80, opacity: 0 }}
         animate={isExpanded ? "expanded" : "collapsed"}
         variants={containerVariants}
         whileHover={!isExpanded ? { scale: 1.1 } : {}}
         whileTap={!isExpanded ? { scale: 0.95 } : {}}
         onClick={handleNavClick}
+        // Tabbing into the collapsed pill opens it, so keyboard users can reach the links.
+        onFocus={() => setExpanded(true)}
         className={cn(
           "flex items-center overflow-hidden rounded-full border bg-background/80 shadow-lg backdrop-blur-sm h-12",
           !isExpanded && "cursor-pointer justify-center"
@@ -115,28 +150,34 @@ export function AnimatedNavFramer() {
           variants={logoVariants}
           className="flex-shrink-0 flex items-center font-semibold pl-3 pr-1 sm:pl-4 sm:pr-2"
         >
-          <Navigation className="h-6 w-6" />
+          <Navigation aria-hidden="true" className="h-6 w-6" />
         </motion.div>
 
-        {/* === ИЗМЕНЕНИЕ ЗДЕСЬ === */}
         <motion.div
           className={cn(
             "flex h-full items-center sm:gap-4 pr-2 sm:pr-4",
-            !isExpanded && "pointer-events-none" // Делаем ссылки некликабельными в свернутом виде
+            !isExpanded && "pointer-events-none" // Links aren't clickable while the pill is collapsed
           )}
         >
-          {navItems.map((item) => (
-            <motion.a
-              key={item.name}
-              href={item.href}
-              variants={itemVariants}
-              onClick={(e) => e.stopPropagation()}
-              // Full nav height keeps the tap target ~44px tall even with compact padding on phones.
-              className="flex h-full items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-1.5 sm:px-2"
-            >
-              {item.name}
-            </motion.a>
-          ))}
+          {navItems.map((item) => {
+            const isActive = activeId === item.href.slice(1);
+            return (
+              <motion.a
+                key={item.name}
+                href={item.href}
+                variants={itemVariants}
+                onClick={(e) => e.stopPropagation()}
+                aria-current={isActive ? "location" : undefined}
+                // Full nav height keeps the tap target ~44px tall even with compact padding on phones.
+                className={cn(
+                  "flex h-full items-center rounded-full text-sm font-medium transition-colors px-1.5 sm:px-2 focus-visible:outline-offset-[-6px]",
+                  isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {item.name}
+              </motion.a>
+            );
+          })}
         </motion.div>
 
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -144,10 +185,10 @@ export function AnimatedNavFramer() {
             variants={collapsedIconVariants}
             animate={isExpanded ? "expanded" : "collapsed"}
           >
-            <Menu className="h-6 w-6" />
+            <Menu aria-hidden="true" className="h-6 w-6" />
           </motion.div>
         </div>
       </motion.nav>
-    </div>
+    </header>
   );
 }

@@ -36,29 +36,29 @@ export type ContributionStats = {
 }
 export type RGB = [number, number, number]
 
-export const DAY_MS = 86400000
+const DAY_MS = 86400000
 
-export const clamp01 = (v: number): number => (v > 0 ? (v < 1 ? v : 1) : 0)
-export const lerp = (a: number, b: number, t: number): number => a + (b - a) * t
-export const easeInOutCubic = (x: number): number => {
+const clamp01 = (v: number): number => (v > 0 ? (v < 1 ? v : 1) : 0)
+const lerp = (a: number, b: number, t: number): number => a + (b - a) * t
+const easeInOutCubic = (x: number): number => {
   const t = clamp01(x)
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
 }
-export const easeOutCubic = (x: number): number => 1 - Math.pow(1 - clamp01(x), 3)
-export const smoothstep = (a: number, b: number, x: number): number => {
+const easeOutCubic = (x: number): number => 1 - Math.pow(1 - clamp01(x), 3)
+const smoothstep = (a: number, b: number, x: number): number => {
   const t = clamp01((x - a) / (b - a))
   return t * t * (3 - 2 * t)
 }
 
 /** UTC midnight → "YYYY-MM-DD". */
-export const toKey = (ms: number): string => new Date(ms).toISOString().slice(0, 10)
+const toKey = (ms: number): string => new Date(ms).toISOString().slice(0, 10)
 
 /**
  * Any date-ish value → UTC midnight of its calendar day. "YYYY-MM-DD" strings
  * are read literally (no timezone drift), Date objects by their local day,
  * numbers as UTC timestamps.
  */
-export const dayMs = (v: string | number | Date): number => {
+const dayMs = (v: string | number | Date): number => {
   if (typeof v === "number") return Math.floor(v / DAY_MS) * DAY_MS
   if (typeof v === "string") {
     const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(v)
@@ -69,7 +69,7 @@ export const dayMs = (v: string | number | Date): number => {
 }
 
 /** mulberry32 — small, fast, deterministic. */
-export const rng = (seed: number) => {
+const rng = (seed: number) => {
   let a = seed >>> 0
   return (): number => {
     a = (a + 0x6d2b79f5) >>> 0
@@ -84,7 +84,7 @@ export const rng = (seed: number) => {
  * A believable year for demos: quiet weekends, a few busy seasons, a mood that
  * drifts week to week, and the odd enormous day.
  */
-export const generateContributions = (endMs: number, seed = 7, days = 371): ContributionDay[] => {
+const generateContributions = (endMs: number, seed = 7, days = 371): ContributionDay[] => {
   const r = rng(seed)
   const bursts = Array.from({ length: 4 }, () => ({ at: r(), width: 0.035 + r() * 0.07, gain: 0.6 + r() * 1.1 }))
   const out: ContributionDay[] = []
@@ -113,7 +113,7 @@ export const generateContributions = (endMs: number, seed = 7, days = 371): Cont
  * Levels 1–4 split the non-zero days by their share of a busy day — the 95th
  * percentile, so one freak day can't wash every other day out to level 1.
  */
-export const buildGrid = (data: ContributionDay[], endMs: number, weekStart = 0) => {
+const buildGrid = (data: ContributionDay[], endMs: number, weekStart = 0) => {
   const counts = new Map<string, number>()
   for (const d of data) {
     if (!d || typeof d.date !== "string") continue
@@ -137,11 +137,11 @@ export const buildGrid = (data: ContributionDay[], endMs: number, weekStart = 0)
 }
 
 /** 0 for an empty day, else 1–4 by quarters of `busy`. Anything at or past `busy` is 4. */
-export const levelOf = (count: number, busy: number): number =>
+const levelOf = (count: number, busy: number): number =>
   count <= 0 ? 0 : busy <= 0 ? 4 : 1 + Math.min(3, Math.floor((count / busy) * 4))
 
 /** Total, busiest day, longest run, and the run that reaches today (or yesterday — today isn't over). */
-export const computeStats = (cells: Cell[]): ContributionStats => {
+const computeStats = (cells: Cell[]): ContributionStats => {
   let total = 0
   let best = 0
   let bestDate: string | null = null
@@ -177,7 +177,7 @@ export const computeStats = (cells: Cell[]): ContributionStats => {
 }
 
 /** A label on each week whose first day starts a new month; a cramped first label is dropped. */
-export const monthLabels = (cells: Cell[], weeks: number, locale = "en-US") => {
+const monthLabels = (cells: Cell[], weeks: number, locale = "en-US") => {
   const fmt = new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" })
   const out: { week: number; label: string }[] = []
   let prev = -1
@@ -193,22 +193,22 @@ export const monthLabels = (cells: Cell[], weeks: number, locale = "en-US") => {
 }
 
 /** Box height in grid units. Empty days are thin slabs; the busiest day is ~7.6 cells tall. */
-export const barHeight = (count: number, max: number, scale = 1): number =>
+const barHeight = (count: number, max: number, scale = 1): number =>
   count > 0 && max > 0 ? 0.4 + Math.pow(count / max, 0.85) * 7.2 * scale : 0.2
 
 /** Share of the morph each bar spends waiting — the wave sweeps oldest week → newest. */
-export const WAVE = 0.42
+const WAVE = 0.42
 
 /** 0 → 1 as a bar rises during the morph. Every bar is flat at t=0 and fully up at t=1. */
-export const riseAt = (t: number, week: number, weeks: number, day: number): number => {
+const riseAt = (t: number, week: number, weeks: number, day: number): number => {
   const d = (weeks > 1 ? week / (weeks - 1) : 0) * 0.36 + (day / 6) * 0.06
   return easeOutCubic((t - d) / (1 - WAVE))
 }
 
-export const YAW_3D = Math.PI / 4
-export const ELEV_3D = (34 * Math.PI) / 180
-export const YAW_RANGE: [number, number] = [(8 * Math.PI) / 180, (82 * Math.PI) / 180]
-export const ELEV_RANGE: [number, number] = [(18 * Math.PI) / 180, (62 * Math.PI) / 180]
+const YAW_3D = Math.PI / 4
+const ELEV_3D = (34 * Math.PI) / 180
+const YAW_RANGE: [number, number] = [(8 * Math.PI) / 180, (82 * Math.PI) / 180]
+const ELEV_RANGE: [number, number] = [(18 * Math.PI) / 180, (62 * Math.PI) / 180]
 
 export type Cam = { cs: number; sn: number; se: number; ce: number }
 
@@ -217,29 +217,26 @@ export type Cam = { cs: number; sn: number; se: number; ce: number }
  * invisible — a plain heat map. e=1 is the isometric corner view. Orbit
  * offsets only apply in proportion to e, so the flat view never tilts.
  */
-export const camera = (e: number, dYaw = 0, dElev = 0): Cam => {
+const camera = (e: number, dYaw = 0, dElev = 0): Cam => {
   const yaw = Math.min(YAW_RANGE[1], Math.max(0, lerp(0, YAW_3D + dYaw, e)))
   const elev = lerp(Math.PI / 2, Math.min(ELEV_RANGE[1], Math.max(ELEV_RANGE[0], ELEV_3D + dElev)), e)
   return { cs: Math.cos(yaw), sn: Math.sin(yaw), se: Math.sin(elev), ce: Math.cos(elev) }
 }
 
 /** World (x = week, y = weekday, z = up) → screen, before scale/offset. */
-export const project = (c: Cam, x: number, y: number, z: number): [number, number] => [
+const project = (c: Cam, x: number, y: number, z: number): [number, number] => [
   x * c.cs - y * c.sn,
   (x * c.sn + y * c.cs) * c.se - z * c.ce,
 ]
 
-/** Painter's depth for yaw in [0°, 90°]: larger is nearer the viewer, so draw ascending. */
-export const depthOf = (c: Cam, x: number, y: number): number => x * c.sn + y * c.cs
-
-export const mixRGB = (a: RGB, b: RGB, t: number): RGB => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]
-export const luminance = (c: RGB): number => (0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]) / 255
+const mixRGB = (a: RGB, b: RGB, t: number): RGB => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]
+const luminance = (c: RGB): number => (0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]) / 255
 
 export type PaletteName = "github" | "halloween" | "ocean" | "ember" | "grape" | "mono"
 export type PaletteInput = PaletteName | string[] | { light: string[]; dark: string[] }
 
 /** Four colours per theme, lightest activity → heaviest. */
-export const PALETTES: Record<PaletteName, { light: string[]; dark: string[] }> = {
+const PALETTES: Record<PaletteName, { light: string[]; dark: string[] }> = {
   github: { light: ["#c6e48b", "#7bc96f", "#239a3b", "#196127"], dark: ["#0e4429", "#006d32", "#26a641", "#39d353"] },
   halloween: { light: ["#ffee4a", "#ffc501", "#fe9600", "#b33c00"], dark: ["#631c03", "#bd561d", "#fa7a18", "#fddf68"] },
   ocean: { light: ["#b8e3f5", "#6ec3eb", "#2a8fd1", "#0b4f8a"], dark: ["#0c2d4a", "#12508a", "#2a88d8", "#7cc7ff"] },
@@ -248,7 +245,7 @@ export const PALETTES: Record<PaletteName, { light: string[]; dark: string[] }> 
   mono: { light: ["#d4d4d4", "#a3a3a3", "#525252", "#171717"], dark: ["#333333", "#5c5c5c", "#a3a3a3", "#fafafa"] },
 }
 
-export const resolvePalette = (p: PaletteInput | undefined, dark: boolean): string[] => {
+const resolvePalette = (p: PaletteInput | undefined, dark: boolean): string[] => {
   const pick = Array.isArray(p) ? p : typeof p === "object" && p ? (dark ? p.dark : p.light) : PALETTES[(p as PaletteName) ?? "github"] ? PALETTES[p as PaletteName][dark ? "dark" : "light"] : PALETTES.github[dark ? "dark" : "light"]
   const base = PALETTES.github[dark ? "dark" : "light"]
   return [0, 1, 2, 3].map((i) => pick[i] ?? pick[pick.length - 1] ?? base[i])
@@ -536,6 +533,9 @@ export default function ContributionSkyline({
     let H3 = 0
     let Hmax = 0
     let lastH = -1
+    // Until the viewer first goes back to the flat view, the stage keeps the 3D height from the
+    // start, so the first rise doesn't push the rest of the page down (layout shift).
+    let reserve = true
     let dpr = 1
     let gutter = 30
     let labelW = 30
@@ -687,9 +687,10 @@ export default function ContributionSkyline({
       const e = easeInOutCubic(t)
       const cam = camera(e, yaw, elev)
       const Hc = lerp(H2, H3, e)
-      if (Math.abs(Hc - lastH) > 0.2) {
-        stage.style.height = Hc.toFixed(1) + "px"
-        lastH = Hc
+      const shownH = reserve && cfg.current.target === 1 ? Math.max(Hc, H3) : Hc
+      if (Math.abs(shownH - lastH) > 0.2) {
+        stage.style.height = shownH.toFixed(1) + "px"
+        lastH = shownH
       }
       for (let i = 0; i < n; i++) zs[i] = riseAt(t, wk[i], weeks, dy[i]) * hgt[i]
       const b = extent(cam, e, false)
@@ -1038,6 +1039,7 @@ export default function ContributionSkyline({
 
     const setTarget = () => {
       const goal = cfg.current.target
+      if (goal === 0) reserve = false
       if (!entered) return
       if (goal !== target) {
         target = goal

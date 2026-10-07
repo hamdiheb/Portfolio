@@ -26,7 +26,7 @@ function Avatar({ className }: { className?: string }) {
 
 function TypingDots() {
   return (
-    <span className="inline-flex gap-1 py-1" aria-label="Typing">
+    <span className="inline-flex gap-1 py-1" role="status" aria-label="Typing">
       {[0, 150, 300].map((delay) => (
         <span
           key={delay}
@@ -113,9 +113,10 @@ export function CvChatPanel({ className, listClassName, inputRef, onClose }: CvC
       <header className="flex items-center gap-3 border-b px-4 py-3">
         <Avatar className="h-10 w-10" />
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-foreground">My CV Assistant</p>
+          <p className="text-sm font-semibold text-foreground">My AI Assistant</p>
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <span
+              aria-hidden="true"
               className={cn(
                 'h-2 w-2 rounded-full',
                 online === false ? 'bg-muted-foreground/50' : 'bg-emerald-500',
@@ -131,7 +132,7 @@ export function CvChatPanel({ className, listClassName, inputRef, onClose }: CvC
           title="New conversation"
           className="grid h-9 w-9 place-items-center rounded-full bg-assistant-soft text-assistant-ink transition-transform hover:scale-105"
         >
-          <RotateCcw className="h-4 w-4" />
+          <RotateCcw aria-hidden="true" className="h-4 w-4" />
         </button>
         {onClose && (
           <button
@@ -177,7 +178,7 @@ export function CvChatPanel({ className, listClassName, inputRef, onClose }: CvC
           onChange={(e) => setDraft(e.target.value)}
           maxLength={500}
           placeholder="Ask me anything about my CV…"
-          aria-label="Ask a question about my CV"
+          aria-label="Ask my AI assistant a question about my CV"
           className="h-11 min-w-0 flex-1 rounded-full border bg-background px-4 text-sm text-foreground outline-none transition-shadow placeholder:text-muted-foreground focus:ring-2 focus:ring-assistant/40"
         />
         <button
@@ -186,7 +187,7 @@ export function CvChatPanel({ className, listClassName, inputRef, onClose }: CvC
           aria-label="Send"
           className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-assistant text-white shadow-md transition-[transform,opacity] hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
         >
-          <Send className="h-4 w-4" />
+          <Send aria-hidden="true" className="h-4 w-4" />
         </button>
       </form>
     </div>

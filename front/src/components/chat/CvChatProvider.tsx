@@ -8,7 +8,7 @@ const greeting = (): ChatMessage => ({
   id: 'greeting',
   role: 'bot',
   content:
-    "Hi! I'm Iheb's CV assistant. Ask me about my experience, skills, projects or education.",
+    "Hi! I'm Iheb's AI assistant, answering from his CV. Ask me about my experience, skills, projects or education.",
   createdAt: Date.now(),
 })
 

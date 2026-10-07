@@ -1,63 +1,65 @@
 import { ProjectShowcase, type Project } from '@/components/ui/project-showcase'
 
-// Placeholder content — swap these out for your real projects.
+// Mirrors the Projects section of the CV (src/assets/resume.pdf).
 const PROJECTS: Project[] = [
   {
-    id: '1',
-    name: 'Project One',
+    id: 'ab-auto-centre',
+    name: 'AB Auto Centre',
     description:
-      'Add a description for this project — what it does and why it matters.',
-    year: '2024',
-    href: '#',
-    tags: ['Web App', 'TypeScript'],
-    gradientClassName: 'bg-gradient-to-br from-[var(--brand-accent)] to-pink-400',
+      'Booking site for a Québec auto repair shop, synced both ways with the garage’s GEM-CAR system: live availability in, confirmed bookings written back as work orders.',
+    year: '2026',
+    role: 'Freelance',
+    tags: ['React 19', 'Express 5', 'Supabase / Postgres', 'Vercel', 'Render'],
+    gradientClassName: 'bg-gradient-to-br from-zinc-900 via-zinc-700 to-amber-500',
   },
   {
-    id: '2',
-    name: 'Project Two',
+    id: 'pikpilot',
+    name: 'PikPilot',
     description:
-      'Add a description for this project — what it does and why it matters.',
-    year: '2024',
-    href: '#',
-    tags: ['API', 'Node.js'],
-    gradientClassName: 'bg-gradient-to-br from-sky-400 to-cyan-200',
+      'AI-powered movie discovery: plain-language requests become film recommendations from an LLM, each one verified against the TMDB API.',
+    year: '2026',
+    role: 'Solo',
+    href: 'https://pikpilot.netlify.app',
+    repoHref: 'https://github.com/hamdiheb/PIKPILOT',
+    tags: ['React 19', 'Express 5', 'OpenRouter', 'TMDB API', 'GSAP'],
+    gradientClassName: 'bg-gradient-to-br from-rose-500 via-orange-400 to-amber-300',
   },
   {
-    id: '3',
-    name: 'Project Three',
+    id: 'guesswho',
+    name: 'GuessWho',
     description:
-      'Add a description for this project — what it does and why it matters.',
-    year: '2023',
-    href: '#',
-    tags: ['AI', 'Python'],
-    gradientClassName: 'bg-gradient-to-br from-amber-300 to-orange-500',
-  },
-  {
-    id: '4',
-    name: 'Project Four',
-    description:
-      'Add a description for this project — what it does and why it matters.',
-    year: '2023',
-    href: '#',
-    tags: ['Open Source'],
-    gradientClassName: 'bg-gradient-to-br from-violet-400 to-fuchsia-300',
+      'Full-stack multiplayer social game with an AI question generator, built with a 3-person team through a branch-per-feature, peer-reviewed Git flow.',
+    year: '2026',
+    role: 'Team of 3',
+    href: 'https://guesswhomigracode.netlify.app',
+    repoHref: 'https://github.com/hamdiheb/GuessWhoProject',
+    tags: ['React 19', 'Express 5', 'PostgreSQL (Supabase)', 'OpenRouter'],
+    gradientClassName: 'bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-700',
   },
 ]
 
 export function ProjectsSection() {
   return (
-    <section className="relative px-4 py-20 sm:py-28">
+    <section
+      id="projects"
+      aria-labelledby="projects-heading"
+      className="relative px-4 py-20 text-left sm:py-24"
+    >
       {/* Same content width as the hero, so section edges line up. */}
       <div className="mx-auto max-w-6xl">
-        <div className="mb-10 text-left">
-          <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+        <div className="mb-10">
+          <p className="text-xs font-medium tracking-widest text-muted-foreground uppercase">
             Selected Work
           </p>
-          <h2 className="mt-2! mb-0! text-3xl! font-bold! tracking-tight! text-foreground! sm:text-4xl!">
+          <h2
+            id="projects-heading"
+            className="mt-2! mb-0! text-3xl! font-bold! tracking-tight! text-foreground! sm:text-4xl!"
+          >
             Things I&apos;ve built
           </h2>
-          <p className="mt-3! text-muted-foreground">
-            A few projects I&apos;m proud of — real case studies coming soon.
+          <p className="mt-3! max-w-2xl text-muted-foreground">
+            Full-stack products I&apos;ve designed and shipped end to end — React front ends,
+            Node.js and Express APIs, PostgreSQL data and AI integrations.
           </p>
         </div>
 

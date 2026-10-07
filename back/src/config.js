@@ -40,6 +40,16 @@ export const config = {
   trustProxy: /^\d+$/.test(process.env.TRUST_PROXY ?? '')
     ? Number(process.env.TRUST_PROXY)
     : (process.env.TRUST_PROXY ?? 'loopback'),
+  // Contact form email. Leave SMTP_HOST empty to disable it (the endpoint then answers 503).
+  smtp: {
+    host: process.env.SMTP_HOST || '',
+    port: Number(process.env.SMTP_PORT || 587),
+    user: process.env.SMTP_USER || '',
+    pass: process.env.SMTP_PASS || '',
+    // Where messages are delivered, and the sender address (defaults to SMTP_USER).
+    to: process.env.CONTACT_TO || '',
+    from: process.env.CONTACT_FROM || '',
+  },
 }
 
 export const chatModelName =

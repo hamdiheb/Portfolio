@@ -17,10 +17,10 @@ import { useCvChat } from '@/components/chat/CvChatProvider'
 const EASE = [0.22, 1, 0.36, 1] as const
 
 const TRAITS = [
-  ['Full-Stack', 'Developer'],
+  ['Full-Stack', 'Engineer'],
   ['API & System', 'Designer'],
   ['AI Feature', 'Builder'],
-  ['Based in', 'Barcelona'],
+  ['Based in', 'Barcelona, Spain'],
 ]
 
 /** One line of the name, rising out of a mask. */
@@ -100,7 +100,15 @@ function Ghost({
 }
 
 /** The grayscale photo with its ghost trail; sized by the parent. */
-function PortraitPhoto({ pointer, className }: { pointer: MotionValue<number>; className?: string }) {
+function PortraitPhoto({
+  pointer,
+  className,
+  alt = '',
+}: {
+  pointer: MotionValue<number>
+  className?: string
+  alt?: string
+}) {
   const reduce = useReducedMotion()
   return (
     <div className={`relative aspect-[4/5] ${className ?? ''}`}>
@@ -108,7 +116,7 @@ function PortraitPhoto({ pointer, className }: { pointer: MotionValue<number>; c
       <Ghost pointer={pointer} offset={8} opacity={0.28} delay={0.65} />
       <motion.img
         src={profileImg}
-        alt="Iheb Hamdi"
+        alt={alt}
         className="relative h-full w-full object-cover object-top grayscale contrast-[1.08]"
         initial={reduce ? false : { clipPath: 'inset(100% 0% 0% 0%)' }}
         animate={{ clipPath: 'inset(0% 0% 0% 0%)' }}
@@ -166,7 +174,7 @@ function Portrait() {
         </p>
       </FadeUp>
 
-      <PortraitPhoto pointer={pointer} />
+      <PortraitPhoto pointer={pointer} alt="Portrait of Iheb Hamdi, Full-Stack Engineer in Barcelona" />
 
       <FadeUp delay={1.05} className="absolute bottom-0 left-0 z-10">
         <p className="text-2xl leading-[1.05] font-semibold tracking-tight text-foreground sm:text-3xl">
@@ -189,7 +197,6 @@ export function HeroSection() {
         <div>
           <div className="relative">
             <MobilePortrait />
-            {/* `!` beats the unlayered h1/h2/p rules in index.css. */}
             <h1 className="relative z-10 m-0! flex flex-col text-[clamp(3.75rem,11vw,8.5rem)]! leading-[0.92]! font-black! tracking-[-0.045em]! text-foreground!">
               <RevealLine delay={0.1}>Iheb</RevealLine>
               <RevealLine delay={0.22}>Hamdi</RevealLine>
@@ -207,8 +214,9 @@ export function HeroSection() {
 
           <FadeUp delay={0.55}>
             <p className="mt-4! max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
-              I ship production web systems end to end — REST APIs, relational data models and
-              React front ends — and build AI-powered features without cutting corners.
+              Full-Stack Engineer based in Barcelona, Spain. I ship production web systems end to
+              end — Node.js REST APIs, PostgreSQL data models and React front ends — and build
+              AI-powered features without cutting corners.
             </p>
           </FadeUp>
 
@@ -216,17 +224,17 @@ export function HeroSection() {
             <button
               type="button"
               onClick={() => setOpen(true)}
-              className="group inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-3 text-sm font-semibold text-background transition-transform hover:-translate-y-0.5"
+              className="group inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-3 text-sm font-semibold text-background transition-transform hover:-translate-y-0.5 motion-reduce:hover:translate-y-0"
             >
               Ask my AI assistant
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </button>
             <a
               href={resumeUrl}
               download="Iheb-Hamdi-CV.pdf"
               className="inline-flex items-center gap-2 rounded-full border px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
             >
-              <ArrowDownToLine className="h-4 w-4" />
+              <ArrowDownToLine aria-hidden="true" className="h-4 w-4" />
               Download CV
             </a>
           </FadeUp>

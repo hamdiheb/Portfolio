@@ -3,11 +3,13 @@ import cors from 'cors'
 
 import { chatModelName, config } from './config.js'
 import { answer, isReady, warmUp } from './rag.js'
+import { isMailConfigured, parseContact, sendContactEmail } from './contact.js'
 
 const MAX_QUESTION_LENGTH = 500
 const MAX_HISTORY = 8
 const MAX_HISTORY_ITEM_LENGTH = 2000
 const RATE_LIMIT = { windowMs: 60_000, max: 20 }
+const CONTACT_RATE_LIMIT = { windowMs: 10 * 60_000, max: 5 }
 
 const app = express()
 // Read the visitor's IP from X-Forwarded-For when behind a reverse proxy.
@@ -15,20 +17,39 @@ app.set('trust proxy', config.trustProxy)
 app.use(cors({ origin: config.allowedOrigins }))
 app.use(express.json({ limit: '32kb' }))
 
-// Small per-IP limiter: a local model is slow, so a burst could queue minutes of work.
-const hits = new Map()
-function rateLimit(req, res, next) {
-  const now = Date.now()
-  const entry = hits.get(req.ip)
-  if (!entry || now - entry.start > RATE_LIMIT.windowMs) {
-    hits.set(req.ip, { start: now, count: 1 })
-    return next()
+// Small per-IP limiters: a local model is slow, so a burst could queue minutes of work,
+// and the contact form must not become a way to flood the inbox.
+function createRateLimit({ windowMs, max, message }) {
+  const hits = new Map()
+  // Drop expired entries now and then so the map can't grow without bound.
+  setInterval(() => {
+    const now = Date.now()
+    for (const [ip, entry] of hits) if (now - entry.start > windowMs) hits.delete(ip)
+  }, windowMs).unref()
+
+  return function rateLimit(req, res, next) {
+    const now = Date.now()
+    const entry = hits.get(req.ip)
+    if (!entry || now - entry.start > windowMs) {
+      hits.set(req.ip, { start: now, count: 1 })
+      return next()
+    }
+    if (++entry.count > max) {
+      res.setHeader('Retry-After', String(Math.ceil((entry.start + windowMs - now) / 1000)))
+      return res.status(429).json({ error: message })
+    }
+    next()
   }
-  if (++entry.count > RATE_LIMIT.max) {
-    return res.status(429).json({ error: 'Too many questions — please wait a minute.' })
-  }
-  next()
 }
+
+const chatRateLimit = createRateLimit({
+  ...RATE_LIMIT,
+  message: 'Too many questions — please wait a minute.',
+})
+const contactRateLimit = createRateLimit({
+  ...CONTACT_RATE_LIMIT,
+  message: 'Too many messages — please try again in a few minutes, or email me directly.',
+})
 
 function parseBody(body) {
   const question = typeof body?.message === 'string' ? body.message.trim() : ''
@@ -51,7 +72,7 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', ready: isReady(), provider: config.llmProvider, model: chatModelName })
 })
 
-app.post('/api/chat', rateLimit, async (req, res) => {
+app.post('/api/chat', chatRateLimit, async (req, res) => {
   const input = parseBody(req.body)
   if (!input) {
     return res
@@ -81,6 +102,25 @@ app.post('/api/chat', rateLimit, async (req, res) => {
     } else {
       res.end()
     }
+  }
+})
+
+app.post('/api/contact', contactRateLimit, async (req, res) => {
+  const input = parseContact(req.body)
+  // Pretend a bot's message went through, so it has no reason to retry.
+  if (input.spam) return res.json({ ok: true })
+  if (input.error) return res.status(400).json({ error: input.error })
+
+  if (!isMailConfigured()) {
+    return res.status(503).json({ error: 'The contact form is not available right now.' })
+  }
+
+  try {
+    await sendContactEmail(input)
+    res.json({ ok: true })
+  } catch (err) {
+    console.error('[contact]', err.message)
+    res.status(502).json({ error: "Your message couldn't be sent right now." })
   }
 })
 

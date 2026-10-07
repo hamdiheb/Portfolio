@@ -22,6 +22,36 @@ The resume is indexed at startup; restart after replacing `front/src/assets/resu
 
 - `GET /api/health` → `{ status, ready, provider, model }`
 - `POST /api/chat` `{ message, history?: [{ role: 'user' | 'bot', content }] }` → streamed plain text
+  (20 requests per minute per IP)
+- `POST /api/contact` `{ name, email, message, website? }` → `{ ok: true }`, emailed to `CONTACT_TO`
+  with *Reply-To* set to the visitor
+  - `name` 1–100 chars, `email` a valid address up to 200 chars, `message` 10–5000 chars;
+    otherwise `400 { error }`
+  - `website` is a hidden honeypot: if a bot fills it, the API answers `200 { ok: true }` and sends nothing
+  - `503 { error }` when SMTP isn't configured, `502 { error }` when sending fails,
+    `429 { error }` after 5 messages in 10 minutes from one IP
+
+## Contact form email
+
+Set these in `back/.env` (see `.env.example`). nodemailer is only loaded when the first message
+arrives, so the form costs no memory until it's used.
+
+| Variable | Example | Notes |
+| --- | --- | --- |
+| `SMTP_HOST` | `smtp.gmail.com` | Empty = form disabled (503) |
+| `SMTP_PORT` | `587` | `587` STARTTLS, `465` TLS |
+| `SMTP_USER` | `you@gmail.com` | |
+| `SMTP_PASS` | Gmail *App password* | https://myaccount.google.com/apppasswords (needs 2-Step Verification) |
+| `CONTACT_TO` | `you@gmail.com` | Inbox that receives the messages |
+| `CONTACT_FROM` | *(optional)* | Sender address, defaults to `SMTP_USER` |
+
+On the VM: add them to `back/.env`, then `docker compose up -d --build` (the compose file loads
+`back/.env` with `env_file`, so no other change is needed). Test it with:
+
+```bash
+curl -X POST https://api.your-site.com/api/contact -H 'Content-Type: application/json' \
+  -d '{"name":"Test","email":"you@example.com","message":"Hello from curl!"}'
+```
 
 ## Deploy with Docker (e.g. Google Cloud e2-micro, 1 GB RAM)
 

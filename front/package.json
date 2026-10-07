@@ -1,5 +1,8 @@
 {
-  "name": "porfolio",
+  "name": "iheb-hamdi-portfolio",
+  "description": "Portfolio of Iheb Hamdi, Full-Stack Engineer in Barcelona, Spain",
+  "author": "Iheb Hamdi (https://github.com/hamdiheb)",
+  "homepage": "https://portfolio-khaki-chi.vercel.app",
   "private": true,
   "version": "0.0.0",
   "type": "module",

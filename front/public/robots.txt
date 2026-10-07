@@ -1,0 +1,5 @@
+# Iheb Hamdi — portfolio. Everything public may be crawled, including by AI answer engines.
+User-agent: *
+Allow: /
+
+Sitemap: https://portfolio-khaki-chi.vercel.app/sitemap.xml

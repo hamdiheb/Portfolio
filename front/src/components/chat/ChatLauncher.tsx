@@ -26,9 +26,9 @@ function LauncherButton({ open, onToggle, buttonRef }: LauncherButtonProps) {
       layoutId={LAUNCHER_ID}
       type="button"
       onClick={onToggle}
-      aria-label={open ? 'Close CV chatbot' : 'Ask my CV chatbot'}
+      aria-label={open ? 'Close my AI assistant' : 'Ask my AI assistant'}
       aria-expanded={open}
-      title="Ask my CV chatbot"
+      title="Ask my AI assistant"
       whileHover={{ y: -2 }}
       whileTap={{ scale: 0.94 }}
       className="relative grid h-14 w-14 place-items-center rounded-2xl border bg-card text-foreground shadow-[0_12px_32px_-12px_rgba(0,0,0,0.3)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground"
@@ -112,7 +112,7 @@ export function ChatLauncher({ className }: ChatLauncherProps) {
               <motion.div
                 key="panel"
                 role="dialog"
-                aria-label="CV chatbot"
+                aria-label="AI assistant chat"
                 initial={{ opacity: 0, y: 16, scale: 0.96 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 16, scale: 0.96 }}

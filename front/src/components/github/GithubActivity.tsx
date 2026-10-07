@@ -53,7 +53,11 @@ export function GithubActivity() {
   }, [])
 
   return (
-    <section className="relative px-4 py-16 text-left">
+    <section
+      id="github"
+      aria-labelledby="github-heading"
+      className="relative px-4 py-20 text-left sm:py-24"
+    >
       {/* Same content width as the hero, so section edges line up. */}
       <div className="mx-auto max-w-6xl">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
@@ -61,7 +65,9 @@ export function GithubActivity() {
             <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
               Open Source
             </p>
-            <h2 className="mt-2! mb-0! text-3xl! font-bold! tracking-tight! text-foreground! sm:text-4xl!">
+            <h2
+              id="github-heading"
+              className="mt-2! mb-0! text-3xl! font-bold! tracking-tight! text-foreground! sm:text-4xl!">
               My GitHub activity
             </h2>
             {profile && (
@@ -74,10 +80,11 @@ export function GithubActivity() {
           <a
             href={PROFILE_URL}
             target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+            rel="noopener noreferrer"
+            aria-label={`Iheb Hamdi on GitHub (@${GITHUB_USER})`}
+            className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
           >
-            <SiGithub className="h-4 w-4" />@{GITHUB_USER}
+            <SiGithub aria-hidden="true" className="h-4 w-4" />@{GITHUB_USER}
           </a>
         </div>
 
@@ -95,7 +102,7 @@ export function GithubActivity() {
             <a
               href={PROFILE_URL}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="font-medium text-foreground underline underline-offset-4"
             >
               See them on GitHub

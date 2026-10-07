@@ -1,0 +1,38 @@
+# Iheb Hamdi
+
+> Iheb Hamdi is a full-stack software engineer based in Barcelona, Spain. He ships production web systems end to end — REST APIs, relational data models and React front ends — and builds LLM-powered features. He works in Agile/Scrum teams with Git-based code review and CI/CD.
+
+- Website: https://portfolio-khaki-chi.vercel.app/
+- GitHub: https://github.com/hamdiheb
+- LinkedIn: https://www.linkedin.com/in/hamdiheb
+- Location: Barcelona, Catalonia, Spain
+- Role: Full-Stack Software Engineer (React, Node.js, Express, PostgreSQL)
+- Languages spoken: Arabic (native), English (C1), French (B1–B2), Spanish (B1), Catalan (A2)
+- Contact: use the contact form on the website or LinkedIn
+
+## Skills
+
+- Languages: JavaScript (ES6+), TypeScript, SQL, HTML5, CSS3
+- Frontend: React 19, React Router, Vite, Tailwind CSS, styled-components, GSAP, Framer Motion, responsive design
+- Backend: Node.js, Express 4/5, REST API design, WebSockets, JWT/session/cookie authentication, caching, rate limiting, CORS, input validation
+- Data & cloud: PostgreSQL, Supabase, Row-Level Security, Vercel, Netlify, Render, Coolify
+- DevOps & tooling: Git/GitHub, pull request review, Docker, CI/CD, oxlint/ESLint, npm
+- AI: OpenRouter API (LLM integration), LangChain (retrieval-augmented generation), Claude Code, OpenAI Codex
+
+## Projects
+
+- AB Auto Centre (freelance, August 2026): booking and showcase site for a Québec auto repair shop, integrated two-way with the garage's GEM-CAR management system — live availability computed from shop hours minus GEM occupancy, confirmed bookings written back as client, vehicle, appointment and work order. Resilient caching around a rate-limited third-party API, timezone-correct availability engine, Postgres Row-Level Security. Stack: React 19, Express 5, Supabase/Postgres, Vercel, Render.
+- [PikPilot](https://pikpilot.netlify.app) (solo, 2026): AI-powered movie discovery platform that turns plain-language requests into film recommendations, pairing an LLM with the TMDB API so every result is verified against real data. 5-endpoint Express REST API with per-IP rate limiting, strict CORS and input validation. Stack: React 19, Vite, Express 5, Tailwind CSS, GSAP, OpenRouter, TMDB API, Netlify, Render. Source: https://github.com/hamdiheb/PIKPILOT
+- [GuessWho](https://guesswhomigracode.netlify.app) (3-person team, 2026): full-stack multiplayer social game with an AI question generator on the OpenRouter API; he designed core gameplay logic, led the visual redesign and authored 52 of 106 commits across 28 merged pull requests. Stack: React 19, Express 5, PostgreSQL (Supabase), OpenRouter, Netlify, Render. Source: https://github.com/hamdiheb/GuessWhoProject
+- This portfolio: React 19 + TypeScript + Vite + Tailwind CSS front end, with a CV chatbot backed by a LangChain retrieval-augmented generation (RAG) API.
+
+## Education
+
+- Full-Stack Web Development — MigraCode Barcelona (Oct 2025 – Jun 2026): 800+ hours of JavaScript, React, Node.js, Express, PostgreSQL, REST APIs, WebSockets, Git and Agile delivery.
+- BSc Computer Engineering — Odessa Polytechnic National University (2019 – 2022).
+
+## Experience
+
+- Product Manager (freelance), Global Sports GmbH — remote, 2024 – 2025: scoped, tested and shipped internal tools with developers, including AI integrations.
+- Manager of Delivery Services (freelance), ROLEY GmbH — Barcelona, 2022 – 2023: led a team of 10.
+- Sales Representative (freelance), ROLEY GmbH — Odesa, 2021 – 2022.
