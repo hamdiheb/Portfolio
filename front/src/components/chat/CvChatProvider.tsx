@@ -19,6 +19,9 @@ interface CvChatValue {
   online: boolean | null
   send: (text: string) => void
   reset: () => void
+  /** Whether the chat popup is open; the launcher and hero both control it. */
+  isOpen: boolean
+  setOpen: (open: boolean | ((prev: boolean) => boolean)) => void
 }
 
 const CvChatContext = React.createContext<CvChatValue | null>(null)
@@ -28,6 +31,7 @@ export function CvChatProvider({ children }: { children: React.ReactNode }) {
   const [messages, setMessages] = React.useState<ChatMessage[]>(() => [greeting()])
   const [isStreaming, setIsStreaming] = React.useState(false)
   const [online, setOnline] = React.useState<boolean | null>(null)
+  const [isOpen, setOpen] = React.useState(false)
   const abortRef = React.useRef<AbortController | null>(null)
   // Lets `send` read the latest messages without being recreated on every chunk.
   const messagesRef = React.useRef(messages)
@@ -105,8 +109,8 @@ export function CvChatProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const value = React.useMemo(
-    () => ({ messages, isStreaming, online, send, reset }),
-    [messages, isStreaming, online, send, reset],
+    () => ({ messages, isStreaming, online, send, reset, isOpen, setOpen }),
+    [messages, isStreaming, online, send, reset, isOpen],
   )
 
   return <CvChatContext.Provider value={value}>{children}</CvChatContext.Provider>

@@ -1,121 +1,259 @@
 import * as React from 'react'
-import { Check, Sparkles } from 'lucide-react'
+import {
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+  type MotionValue,
+} from 'framer-motion'
+import { ArrowDownToLine, ArrowRight } from 'lucide-react'
 
 import profileImg from '@/assets/profile.jpeg'
+import resumeUrl from '@/assets/resume.pdf'
 import { ChatLauncher } from '@/components/chat/ChatLauncher'
-import { CvChatPanel } from '@/components/chat/CvChatPanel'
 import { useCvChat } from '@/components/chat/CvChatProvider'
 
-// Each topic pill asks the chatbot a starter question.
-const TOPICS = [
-  { label: 'Experience & Roles', question: 'What roles and experience do you have?' },
-  { label: 'Skills & Technologies', question: 'What are your main skills and technologies?' },
-  { label: 'Projects & Achievements', question: 'What projects are you most proud of?' },
-  { label: 'Education & More', question: 'What is your education, and which languages do you speak?' },
+const EASE = [0.22, 1, 0.36, 1] as const
+
+const TRAITS = [
+  ['Full-Stack', 'Developer'],
+  ['API & System', 'Designer'],
+  ['AI Feature', 'Builder'],
+  ['Based in', 'Barcelona'],
 ]
 
-function ThatsMe() {
+/** One line of the name, rising out of a mask. */
+function RevealLine({ children, delay }: { children: React.ReactNode; delay: number }) {
+  const reduce = useReducedMotion()
+  return (
+    // A background strip exactly as wide as the word: where the name crosses the
+    // phone portrait, the photo stops at the text instead of running behind it.
+    <span className="block w-fit overflow-hidden bg-background pr-[0.04em] pb-[0.04em] max-md:mb-[0.1em]">
+      <motion.span
+        className="block"
+        initial={reduce ? false : { y: '105%' }}
+        animate={{ y: 0 }}
+        transition={{ duration: 1, ease: EASE, delay }}
+      >
+        {children}
+      </motion.span>
+    </span>
+  )
+}
+
+function FadeUp({
+  children,
+  delay,
+  className,
+}: {
+  children: React.ReactNode
+  delay: number
+  className?: string
+}) {
+  const reduce = useReducedMotion()
+  return (
+    <motion.div
+      className={className}
+      initial={reduce ? false : { opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: EASE, delay }}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+/** A faded copy of the photo trailing behind it, drifting with the pointer. */
+function Ghost({
+  pointer,
+  offset,
+  opacity,
+  delay,
+}: {
+  pointer: MotionValue<number>
+  offset: number
+  opacity: number
+  delay: number
+}) {
+  const reduce = useReducedMotion()
+  const drift = useTransform(pointer, (p) => `${p * offset * 0.35}%`)
+  return (
+    <motion.div className="absolute inset-0" style={{ x: drift }}>
+      <motion.img
+        src={profileImg}
+        alt=""
+        aria-hidden="true"
+        className="h-full w-full object-cover object-top grayscale"
+        // Only the ghost's left strip peeks out from behind the photo; fading it
+        // keeps the trail soft instead of a hard-edged copy of the backdrop.
+        style={{
+          maskImage: 'linear-gradient(to right, transparent, black 22%)',
+          WebkitMaskImage: 'linear-gradient(to right, transparent, black 22%)',
+        }}
+        initial={reduce ? false : { x: '0%', opacity: 0 }}
+        animate={{ x: `${-offset}%`, opacity }}
+        transition={{ duration: 1.1, ease: EASE, delay }}
+      />
+    </motion.div>
+  )
+}
+
+/** The grayscale photo with its ghost trail; sized by the parent. */
+function PortraitPhoto({ pointer, className }: { pointer: MotionValue<number>; className?: string }) {
+  const reduce = useReducedMotion()
+  return (
+    <div className={`relative aspect-[4/5] ${className ?? ''}`}>
+      <Ghost pointer={pointer} offset={16} opacity={0.12} delay={0.75} />
+      <Ghost pointer={pointer} offset={8} opacity={0.28} delay={0.65} />
+      <motion.img
+        src={profileImg}
+        alt="Iheb Hamdi"
+        className="relative h-full w-full object-cover object-top grayscale contrast-[1.08]"
+        initial={reduce ? false : { clipPath: 'inset(100% 0% 0% 0%)' }}
+        animate={{ clipPath: 'inset(0% 0% 0% 0%)' }}
+        transition={{ duration: 1.1, ease: EASE, delay: 0.25 }}
+      />
+    </div>
+  )
+}
+
+/**
+ * Phones: a portrait behind the right end of the name. Each line of the name
+ * and tagline sits on its own background strip, and the photo's left side fades out.
+ */
+function MobilePortrait() {
+  const still = useMotionValue(0)
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute -top-10 -left-6 hidden -rotate-12 sm:block lg:-left-14"
+      // Exactly as tall as the name and tagline block, so photo and text line up top and bottom;
+      // the width follows from the 4:5 ratio.
+      className="pointer-events-none absolute top-0 right-0 bottom-0 aspect-[4/5] md:hidden"
+      style={{
+        maskImage: 'linear-gradient(to right, transparent, black 25%)',
+        WebkitMaskImage: 'linear-gradient(to right, transparent, black 25%)',
+      }}
     >
-      <span className="font-handwriting text-2xl text-assistant-ink">That&apos;s me!</span>
-      <svg viewBox="0 0 60 50" className="ml-10 h-12 w-14 text-assistant-ink">
-        <path
-          d="M6 4c4 18 16 32 40 38m0 0-11-1m11 1-5-9"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
+      <PortraitPhoto pointer={still} />
+    </div>
+  )
+}
+
+function Portrait() {
+  const reduce = useReducedMotion()
+  // -1 (pointer at the left edge) … 1 (right edge); the spring keeps the drift soft.
+  const raw = useMotionValue(0)
+  const pointer = useSpring(raw, { stiffness: 80, damping: 20 })
+
+  function onPointerMove(e: React.PointerEvent<HTMLDivElement>) {
+    if (reduce || e.pointerType !== 'mouse') return
+    const rect = e.currentTarget.getBoundingClientRect()
+    raw.set(((e.clientX - rect.left) / rect.width) * 2 - 1)
+  }
+
+  return (
+    <div
+      onPointerMove={onPointerMove}
+      onPointerLeave={() => raw.set(0)}
+      className="relative ml-auto hidden w-full max-w-[380px] pt-16 pb-16 md:block"
+    >
+      <FadeUp delay={0.9} className="absolute top-0 right-0 z-10 text-right">
+        <p className="text-2xl leading-[1.05] font-semibold tracking-tight text-foreground sm:text-3xl">
+          Full-Stack
+          <br />
+          Engineer
+        </p>
+      </FadeUp>
+
+      <PortraitPhoto pointer={pointer} />
+
+      <FadeUp delay={1.05} className="absolute bottom-0 left-0 z-10">
+        <p className="text-2xl leading-[1.05] font-semibold tracking-tight text-foreground sm:text-3xl">
+          AI
+          <br />
+          Integrations
+        </p>
+      </FadeUp>
     </div>
   )
 }
 
 export function HeroSection() {
-  const { send, isStreaming } = useCvChat()
-  const chatCardRef = React.useRef<HTMLDivElement>(null)
-  const inputRef = React.useRef<HTMLInputElement>(null)
-
-  function focusChat() {
-    chatCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-    inputRef.current?.focus({ preventScroll: true })
-  }
-
-  function askTopic(question: string) {
-    if (isStreaming) return
-    send(question)
-    chatCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-  }
+  const { setOpen } = useCvChat()
+  const reduce = useReducedMotion()
 
   return (
-    <section id="home" className="relative overflow-hidden px-4 pt-28 pb-20 text-left sm:pt-32 lg:pt-36">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-40 right-[-20%] h-[720px] w-[720px] rounded-full bg-[radial-gradient(closest-side,var(--assistant-glow),transparent)]"
-      />
-
-      <div className="relative mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1fr_1.1fr] lg:gap-10">
+    <section id="home" className="relative overflow-x-clip px-4 pt-28 pb-14 text-left sm:pt-32">
+      <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-[1.2fr_1fr] md:gap-6">
         <div>
-          <span className="inline-flex items-center gap-2 rounded-full bg-assistant-soft px-4 py-2 text-sm font-medium text-assistant-ink">
-            <Sparkles className="h-4 w-4" />
-            Ask my CV chatbot
-          </span>
+          <div className="relative">
+            <MobilePortrait />
+            {/* `!` beats the unlayered h1/h2/p rules in index.css. */}
+            <h1 className="relative z-10 m-0! flex flex-col text-[clamp(3.75rem,11vw,8.5rem)]! leading-[0.92]! font-black! tracking-[-0.045em]! text-foreground!">
+              <RevealLine delay={0.1}>Iheb</RevealLine>
+              <RevealLine delay={0.22}>Hamdi</RevealLine>
+            </h1>
 
-          {/* `!` beats the unlayered h1/p rules in index.css. */}
-          <h1 className="mt-6! mb-0! text-4xl! leading-[1.1]! font-bold! tracking-tight! sm:text-5xl! xl:text-[56px]!">
-            Have a question about my background?{' '}
-            <span className="block bg-gradient-to-r from-violet-500 via-assistant to-sky-500 bg-clip-text text-transparent">
-              Just ask my chatbot!
-            </span>
-          </h1>
-
-          <p className="mt-6! max-w-lg text-lg text-muted-foreground">
-            My AI assistant can answer questions about my experience, skills, projects, education and
-            more — just like I would.
-          </p>
-
-          <ul className="mt-8 flex max-w-lg flex-wrap gap-3">
-            {TOPICS.map((topic) => (
-              <li key={topic.label}>
-                <button
-                  type="button"
-                  onClick={() => askTopic(topic.question)}
-                  disabled={isStreaming}
-                  className="inline-flex items-center gap-2.5 rounded-full bg-assistant-soft py-2.5 pr-4 pl-3 text-sm font-medium text-foreground transition-colors hover:bg-assistant/20 disabled:cursor-wait"
-                >
-                  <span className="grid h-5 w-5 place-items-center rounded-full bg-assistant text-white">
-                    <Check className="h-3 w-3" strokeWidth={3} />
-                  </span>
-                  {topic.label}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="relative flex flex-col items-center gap-12 lg:block lg:h-[560px]">
-          <div className="relative mt-10 lg:absolute lg:top-24 lg:left-0 lg:mt-0">
-            <div
-              aria-hidden="true"
-              className="absolute -inset-6 rounded-[48%_52%_44%_56%/55%_45%_55%_45%] bg-gradient-to-br from-sky-300/40 to-assistant/30"
-            />
-            <img
-              src={profileImg}
-              alt="Iheb Hamdi"
-              className="relative h-[340px] w-[290px] rounded-[2.5rem] object-cover object-top shadow-xl"
-            />
-            <ThatsMe />
-            <ChatLauncher onDockedPress={focusChat} className="absolute -bottom-8 -left-8" />
+            <FadeUp delay={0.45} className="relative z-10">
+              <h2 className="mt-8! mb-0! text-2xl! leading-tight! font-semibold! tracking-tight! text-foreground! sm:text-3xl!">
+                {/* One strip per line, each ending where its text ends. Block backgrounds paint
+                    before all text, so a strip never covers the line above's descenders. */}
+                <span className="block w-fit bg-background px-[2px] max-md:mb-[0.15em]">Building Products</span>
+                <span className="block w-fit bg-background px-[2px]">From API to Interface</span>
+              </h2>
+            </FadeUp>
           </div>
 
-          <div ref={chatCardRef} className="w-full max-w-[360px] scroll-mt-28 lg:absolute lg:top-0 lg:right-0">
-            <CvChatPanel inputRef={inputRef} listClassName="h-[340px]" />
-          </div>
+          <FadeUp delay={0.55}>
+            <p className="mt-4! max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
+              I ship production web systems end to end — REST APIs, relational data models and
+              React front ends — and build AI-powered features without cutting corners.
+            </p>
+          </FadeUp>
+
+          <FadeUp delay={0.65} className="mt-8 flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              className="group inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-3 text-sm font-semibold text-background transition-transform hover:-translate-y-0.5"
+            >
+              Ask my AI assistant
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </button>
+            <a
+              href={resumeUrl}
+              download="Iheb-Hamdi-CV.pdf"
+              className="inline-flex items-center gap-2 rounded-full border px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+            >
+              <ArrowDownToLine className="h-4 w-4" />
+              Download CV
+            </a>
+          </FadeUp>
         </div>
+
+        <Portrait />
+      </div>
+
+      <div className="relative mx-auto mt-14 max-w-6xl">
+        <ul className="m-0 grid list-none grid-cols-2 gap-x-6 gap-y-6 border-t p-0 pt-6 sm:grid-cols-4">
+          {TRAITS.map(([top, bottom], i) => (
+            <motion.li
+              key={top}
+              initial={reduce ? false : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: EASE, delay: 1.1 + i * 0.08 }}
+              className="text-sm leading-snug font-medium text-foreground"
+            >
+              {top}
+              <br />
+              <span className="text-muted-foreground">{bottom}</span>
+            </motion.li>
+          ))}
+        </ul>
+
+        {/* Aligned with the content's right edge; docks here until the hero scrolls away. */}
+        <ChatLauncher className="absolute top-full right-0 z-20 mt-7" />
       </div>
     </section>
   )

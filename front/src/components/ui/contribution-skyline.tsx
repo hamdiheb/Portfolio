@@ -392,7 +392,8 @@ function Stat({
         <div className="text-[13px] leading-tight" style={{ color: MUTED }}>
           {label}
         </div>
-        <div className="mt-1 flex items-baseline gap-1.5">
+        {/* Wraps the unit under the number when the column is narrow (small phones). */}
+        <div className="mt-1 flex flex-wrap items-baseline gap-x-1.5">
           <span
             className="font-semibold tabular-nums transition-colors duration-500 motion-reduce:transition-none"
             style={{ color: accent, fontSize: size, lineHeight: 1, letterSpacing: "-0.02em" }}
@@ -1203,7 +1204,7 @@ export default function ContributionSkyline({
           >
             <span
               aria-hidden="true"
-              className="absolute top-0.5 bottom-0.5 left-0.5 w-8 rounded transition-transform duration-500 motion-reduce:transition-none"
+              className="absolute top-0.5 bottom-0.5 left-0.5 w-9 rounded transition-transform duration-500 motion-reduce:transition-none pointer-fine:w-8"
               style={{
                 background: "var(--color-foreground, #171717)",
                 transform: is3d ? "translateX(100%)" : "translateX(0)",
@@ -1218,7 +1219,7 @@ export default function ContributionSkyline({
                 aria-label={v === "2d" ? "Flat heat map" : "3D skyline"}
                 title={v === "2d" ? "Flat heat map" : "3D skyline"}
                 onClick={() => setView(v)}
-                className="relative z-10 grid h-7 w-8 cursor-pointer place-items-center rounded border-0 bg-transparent p-0 transition-colors duration-500 focus-visible:outline-2 focus-visible:outline-offset-2 motion-reduce:transition-none"
+                className="relative z-10 grid h-9 w-9 cursor-pointer place-items-center pointer-fine:h-7 pointer-fine:w-8 rounded border-0 bg-transparent p-0 transition-colors duration-500 focus-visible:outline-2 focus-visible:outline-offset-2 motion-reduce:transition-none"
                 style={{
                   color: view === v ? "var(--color-background, #ffffff)" : MUTED,
                   outlineColor: "var(--color-foreground, #171717)",
@@ -1343,7 +1344,7 @@ export default function ContributionSkyline({
                   onMouseEnter={() => setLegendLevel(i)}
                   onFocus={() => setLegendLevel(i)}
                   onBlur={() => setLegendLevel(-1)}
-                  className="h-3 w-3 cursor-default rounded-[3px] border-0 p-0 transition-transform duration-200 hover:scale-125 motion-reduce:transition-none"
+                  className="relative h-3 w-3 cursor-default rounded-[3px] border-0 p-0 transition-transform duration-200 before:absolute before:-inset-1 before:content-[''] hover:scale-125 motion-reduce:transition-none"
                   style={{
                     background: c,
                     outline: legendLevel === i ? "1.5px solid var(--color-foreground, #171717)" : "none",

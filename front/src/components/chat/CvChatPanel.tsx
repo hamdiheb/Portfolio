@@ -149,7 +149,7 @@ export function CvChatPanel({ className, listClassName, inputRef, onClose }: CvC
         ref={listRef}
         role="log"
         aria-live="polite"
-        className={cn('flex flex-col gap-4 overflow-y-auto overscroll-contain px-4 py-4', listClassName)}
+        className={cn('flex flex-col gap-4 overflow-y-auto px-4 py-4', listClassName)}
       >
         {messages.map((m) => (
           <Message key={m.id} message={m} />

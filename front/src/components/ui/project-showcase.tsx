@@ -56,7 +56,7 @@ export function ProjectShowcase({ projects, className }: ProjectShowcaseProps) {
                 {project.name}
                 <ArrowUpRight className="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
               </span>
-              <p className="mt-1 text-sm text-muted-foreground">{project.description}</p>
+              <p className="mt-1! text-sm text-muted-foreground">{project.description}</p>
               {project.tags && project.tags.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {project.tags.map((tag) => (

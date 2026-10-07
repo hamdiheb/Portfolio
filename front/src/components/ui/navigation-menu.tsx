@@ -113,7 +113,7 @@ export function AnimatedNavFramer() {
       >
         <motion.div
           variants={logoVariants}
-          className="flex-shrink-0 flex items-center font-semibold pl-4 pr-2"
+          className="flex-shrink-0 flex items-center font-semibold pl-3 pr-1 sm:pl-4 sm:pr-2"
         >
           <Navigation className="h-6 w-6" />
         </motion.div>
@@ -121,7 +121,7 @@ export function AnimatedNavFramer() {
         {/* === ИЗМЕНЕНИЕ ЗДЕСЬ === */}
         <motion.div
           className={cn(
-            "flex items-center gap-1 sm:gap-4 pr-4",
+            "flex h-full items-center sm:gap-4 pr-2 sm:pr-4",
             !isExpanded && "pointer-events-none" // Делаем ссылки некликабельными в свернутом виде
           )}
         >
@@ -131,7 +131,8 @@ export function AnimatedNavFramer() {
               href={item.href}
               variants={itemVariants}
               onClick={(e) => e.stopPropagation()}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1"
+              // Full nav height keeps the tap target ~44px tall even with compact padding on phones.
+              className="flex h-full items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-1.5 sm:px-2"
             >
               {item.name}
             </motion.a>

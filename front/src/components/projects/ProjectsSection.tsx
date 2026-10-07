@@ -47,19 +47,22 @@ const PROJECTS: Project[] = [
 export function ProjectsSection() {
   return (
     <section className="relative px-4 py-20 sm:py-28">
-      <div className="mb-10 text-left">
-        <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-          Selected Work
-        </p>
-        <h2 className="mt-2 text-3xl font-bold sm:text-4xl">
-          Things I&apos;ve built
-        </h2>
-        <p className="mt-3 text-muted-foreground">
-          A few projects I&apos;m proud of — real case studies coming soon.
-        </p>
-      </div>
+      {/* Same content width as the hero, so section edges line up. */}
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-10 text-left">
+          <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+            Selected Work
+          </p>
+          <h2 className="mt-2! mb-0! text-3xl! font-bold! tracking-tight! text-foreground! sm:text-4xl!">
+            Things I&apos;ve built
+          </h2>
+          <p className="mt-3! text-muted-foreground">
+            A few projects I&apos;m proud of — real case studies coming soon.
+          </p>
+        </div>
 
-      <ProjectShowcase projects={PROJECTS} />
+        <ProjectShowcase projects={PROJECTS} />
+      </div>
     </section>
   )
 }
