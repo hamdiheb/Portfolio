@@ -16,11 +16,12 @@ services:
       # Caddy is the one proxy hop in front of the API.
       TRUST_PROXY: 1
       # Baked into the image; overrides the dev path in back/.env.
-      RESUME_PATH: /app/data/resume.pdf
+      RESUME_PATH: /app/data/resume.txt
       PORT: 3001
     expose:
       - '3001'
-    mem_limit: 600m
+    # Uses ~260–290 MB; the cap protects the other containers on a 1 GB VM.
+    mem_limit: 400m
     restart: unless-stopped
 
   caddy:

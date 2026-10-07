@@ -1,16 +1,13 @@
-import { readFile } from 'node:fs/promises'
-import { PDFParse } from 'pdf-parse'
 import { Document } from '@langchain/core/documents'
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts'
 import { StringOutputParser } from '@langchain/core/output_parsers'
 import { AIMessage, HumanMessage } from '@langchain/core/messages'
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters'
-import { ChatOllama } from '@langchain/ollama'
-import { ChatGroq } from '@langchain/groq'
 import { MemoryVectorStore } from '@langchain/classic/vectorstores/memory'
 
 import { config } from './config.js'
 import { LocalEmbeddings } from './embeddings.js'
+import { loadResumeText } from './resume.js'
 
 const SYSTEM_PROMPT = `You are the CV assistant on Iheb Hamdi's portfolio website.
 Answer visitors' questions about Iheb in the first person, the way Iheb would ("I work with...", "My latest project...").
@@ -31,32 +28,27 @@ const prompt = ChatPromptTemplate.fromMessages([
   ['human', '{question}'],
 ])
 
-const llm =
-  config.llmProvider === 'groq'
-    ? new ChatGroq({ apiKey: config.groqApiKey, model: config.groqModel, temperature: 0.2 })
-    : new ChatOllama({
-        baseUrl: config.ollamaBaseUrl,
-        model: config.ollamaModel,
-        temperature: 0.2,
-        keepAlive: config.keepAlive,
-      })
+// Import only the provider in use; each SDK costs memory on a small server.
+async function createLlm() {
+  if (config.llmProvider === 'groq') {
+    const { ChatGroq } = await import('@langchain/groq')
+    return new ChatGroq({ apiKey: config.groqApiKey, model: config.groqModel, temperature: 0.2 })
+  }
+  const { ChatOllama } = await import('@langchain/ollama')
+  return new ChatOllama({
+    baseUrl: config.ollamaBaseUrl,
+    model: config.ollamaModel,
+    temperature: 0.2,
+    keepAlive: config.keepAlive,
+  })
+}
 
 const embeddings = new LocalEmbeddings(config.embedModel)
 
-const chain = prompt.pipe(llm).pipe(new StringOutputParser())
-
-async function loadResume() {
-  const parser = new PDFParse({ data: await readFile(config.resumePath) })
-  try {
-    const { text } = await parser.getText()
-    return text
-  } finally {
-    await parser.destroy()
-  }
-}
+const chain = prompt.pipe(await createLlm()).pipe(new StringOutputParser())
 
 async function buildRetriever() {
-  const text = await loadResume()
+  const text = await loadResumeText(config.resumePath)
   const splitter = new RecursiveCharacterTextSplitter({
     chunkSize: 700,
     chunkOverlap: 120,

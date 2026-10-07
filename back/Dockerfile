@@ -13,16 +13,20 @@ RUN npm ci --omit=dev \
   && npm cache clean --force
 # Bake the embedding model into the image so startup needs no download.
 RUN node -e "import('@huggingface/transformers').then((t) => t.pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2', { dtype: 'q8' }))"
+# Extract the resume text now, so the PDF parser never loads on the server.
+COPY back/src/resume.js ./src/resume.js
+COPY front/src/assets/resume.pdf ./data/resume.pdf
+RUN node src/resume.js data/resume.pdf data/resume.txt
 
 FROM node:24-slim
 ENV NODE_ENV=production \
     PORT=3001 \
-    RESUME_PATH=/app/data/resume.pdf
+    RESUME_PATH=/app/data/resume.txt
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY back/package.json ./
 COPY back/src ./src
-COPY front/src/assets/resume.pdf ./data/resume.pdf
+COPY --from=deps /app/data/resume.txt ./data/resume.txt
 
 USER node
 EXPOSE 3001

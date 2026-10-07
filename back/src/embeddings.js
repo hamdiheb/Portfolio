@@ -14,7 +14,11 @@ export class LocalEmbeddings extends Embeddings {
   }
 
   async #getExtractor() {
-    this.extractor ??= pipeline('feature-extraction', this.model, { dtype: 'q8' }).catch((err) => {
+    this.extractor ??= pipeline('feature-extraction', this.model, {
+      dtype: 'q8',
+      // One thread and no pre-allocated memory pool: slower by milliseconds, far leaner.
+      session_options: { intraOpNumThreads: 1, interOpNumThreads: 1, enableCpuMemArena: false },
+    }).catch((err) => {
       this.extractor = null
       throw err
     })

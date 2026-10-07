@@ -30,7 +30,7 @@ export const config = {
     here,
     process.env.RESUME_PATH ?? '../../front/src/assets/resume.pdf',
   ),
-  topK: Number(process.env.TOP_K ?? 4),
+  topK: Number(process.env.TOP_K ?? 5),
   // Express "trust proxy": a hop count (e.g. 1 behind Caddy in Docker) or a name like "loopback".
   trustProxy: /^\d+$/.test(process.env.TRUST_PROXY ?? '')
     ? Number(process.env.TRUST_PROXY)

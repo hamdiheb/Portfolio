@@ -25,7 +25,7 @@ The resume is indexed at startup; restart after replacing `front/src/assets/resu
 
 ## Deploy with Docker (e.g. Google Cloud e2-micro, 1 GB RAM)
 
-`docker-compose.yml` at the repo root runs two containers: this API (Groq for answers, ~400 MB
+`docker-compose.yml` at the repo root runs two containers: this API (Groq for answers, ~290 MB
 RAM) and Caddy in front of it, which gets and renews the HTTPS certificate automatically.
 A site served over HTTPS can only call an HTTPS API, so the API needs its own domain.
 
