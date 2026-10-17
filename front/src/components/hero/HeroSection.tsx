@@ -17,7 +17,7 @@ import { useCvChat } from '@/components/chat/CvChatProvider'
 const EASE = [0.22, 1, 0.36, 1] as const
 
 const TRAITS = [
-  ['Full-Stack', 'Engineer'],
+  ['Full-Stack', 'Developer'],
   ['API & System', 'Designer'],
   ['AI Feature', 'Builder'],
   ['Based in', 'Barcelona, Spain'],
@@ -170,11 +170,14 @@ function Portrait() {
         <p className="text-2xl leading-[1.05] font-semibold tracking-tight text-foreground sm:text-3xl">
           Full-Stack
           <br />
-          Engineer
+          Developer
         </p>
       </FadeUp>
 
-      <PortraitPhoto pointer={pointer} alt="Portrait of Iheb Hamdi, Full-Stack Engineer in Barcelona" />
+      <PortraitPhoto
+        pointer={pointer}
+        alt="Portrait of Iheb Hamdi, Full-Stack Developer in Barcelona"
+      />
 
       <FadeUp delay={1.05} className="absolute bottom-0 left-0 z-10">
         <p className="text-2xl leading-[1.05] font-semibold tracking-tight text-foreground sm:text-3xl">
@@ -206,7 +209,9 @@ export function HeroSection() {
               <h2 className="mt-8! mb-0! text-2xl! leading-tight! font-semibold! tracking-tight! text-foreground! sm:text-3xl!">
                 {/* One strip per line, each ending where its text ends. Block backgrounds paint
                     before all text, so a strip never covers the line above's descenders. */}
-                <span className="block w-fit bg-background px-[2px] max-md:mb-[0.15em]">Building Products</span>
+                <span className="block w-fit bg-background px-[2px] max-md:mb-[0.15em]">
+                  Building Products
+                </span>
                 <span className="block w-fit bg-background px-[2px]">From API to Interface</span>
               </h2>
             </FadeUp>
@@ -214,10 +219,10 @@ export function HeroSection() {
 
           <FadeUp delay={0.55}>
             <p className="mt-4! max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
-              Full-Stack Engineer based in Barcelona, Spain. I ship production web systems end to
+              Full-Stack Developer based in Barcelona, Spain. I ship production web systems end to
               end — Node.js REST APIs, PostgreSQL data models and React front ends — and build
-              AI-powered features without cutting corners. Every project ships fully deployed,
-              with a CI/CD pipeline behind it.
+              AI-powered features without cutting corners. Every project ships fully deployed, with
+              a CI/CD pipeline behind it.
             </p>
           </FadeUp>
 
@@ -228,7 +233,10 @@ export function HeroSection() {
               className="group inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-3 text-sm font-semibold text-background transition-transform hover:-translate-y-0.5 motion-reduce:hover:translate-y-0"
             >
               Ask my AI assistant
-              <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              <ArrowRight
+                aria-hidden="true"
+                className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
+              />
             </button>
             <a
               href={resumeUrl}
